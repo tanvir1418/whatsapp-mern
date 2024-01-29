@@ -1,11 +1,33 @@
 const { error } = require("winston");
+const mongoose = require("mongoose");
 const app = require("./app");
 const logger = require("./configs/logger.config");
 
 // .env variables
+const { DATABASE_URL } = process.env;
 const PORT = process.env.PORT || 8000;
 
 // console.log(process.env.NODE_ENV);
+
+// exit on mongodb error
+mongoose.connection.on("error", (err) => {
+  logger.error(`MongoDB connection error: ${err}`);
+  process.exit(1);
+});
+
+// mongodb debug mode
+if (process.env.NODE_ENV !== "production") {
+  mongoose.set("debug", true);
+}
+
+// mongodb connection
+// mongoose.connect(DATABASE_URL, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+mongoose.connect(DATABASE_URL).then(() => {
+  logger.info("Connected to MongoDB");
+});
 
 let server;
 server = app.listen(PORT, () => {
