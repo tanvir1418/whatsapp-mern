@@ -59,6 +59,9 @@ const createUser = async (userData) => {
     );
   }
 
+  // hash password --> to be done in the user model
+
+  // adding user to database
   const user = await new UserModel({
     name,
     email,
