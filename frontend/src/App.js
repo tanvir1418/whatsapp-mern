@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 
 function App() {
   const { user } = useSelector((state) => state.user);
-  const { access_token: token } = user;
+  const { token } = user;
 
   return (
     <div className="dark">
