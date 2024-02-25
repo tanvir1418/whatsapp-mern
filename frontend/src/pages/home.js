@@ -15,9 +15,9 @@ const Home = () => {
   }, [user]);
 
   return (
-    <div className="min-h-screen dark:bg-dark_bg_1 flex items-center justify-center py-[19px] overflow-hidden">
+    <div className="h-screen dark:bg-dark_bg_1 flex items-center justify-center py-[19px] overflow-hidden">
       {/* Container */}
-      <div className="container min-h-screen flex">
+      <div className="container h-screen flex">
         {/* Sidebar */}
         <Sidebar />
       </div>
