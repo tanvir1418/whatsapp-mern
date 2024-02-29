@@ -7,7 +7,6 @@ import { SearchResults } from "./search";
 
 const Sidebar = () => {
   const [searchResults, setSearchResults] = useState([]);
-  console.log(searchResults);
   return (
     <div className="w-[40%] h-full select-none">
       {/* Sidebar Header */}
