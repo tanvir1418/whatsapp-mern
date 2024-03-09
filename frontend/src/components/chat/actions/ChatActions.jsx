@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import EmojiPicker from "./EmojiPicker";
+import React, { useRef, useState } from "react";
+import EmojiPickerApp from "./EmojiPickerApp";
 import Attachments from "./Attachments";
 import Input from "./Input";
 import { SendIcon } from "../../../svg";
@@ -13,6 +13,7 @@ const ChatActions = () => {
   const { user } = useSelector((state) => state.user);
   const { token } = user;
   const [message, setMessage] = useState("");
+  const textRef = useRef();
   const values = {
     message,
     convo_id: activeConversation._id,
@@ -33,11 +34,15 @@ const ChatActions = () => {
       <div className="w-full flex items-center gap-x-2">
         {/* Emojis and attachments */}
         <ul className="flex gap-x-2">
-          <EmojiPicker />
+          <EmojiPickerApp
+            textRef={textRef}
+            message={message}
+            setMessage={setMessage}
+          />
           <Attachments />
         </ul>
         {/* Input */}
-        <Input message={message} setMessage={setMessage} />
+        <Input message={message} setMessage={setMessage} textRef={textRef} />
         {/* Send button */}
         <button type="submit" className="btn">
           {status === "loading" ? (
