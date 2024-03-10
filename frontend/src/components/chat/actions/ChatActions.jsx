@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import EmojiPickerApp from "./EmojiPickerApp";
-import Attachments from "./Attachments";
+import { Attachments } from "./attachments";
 import Input from "./Input";
 import { SendIcon } from "../../../svg";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,9 @@ import { ClipLoader } from "react-spinners";
 
 const ChatActions = () => {
   const dispatch = useDispatch();
+  const [showPicker, setShowPicker] = useState(false);
+  const [showAttachments, setShowAttachments] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { activeConversation, status } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
   const { token } = user;
@@ -22,8 +25,10 @@ const ChatActions = () => {
   };
   const sendMessageHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
     await dispatch(sendMessage(values));
     setMessage("");
+    setLoading(false);
   };
   return (
     <form
@@ -38,14 +43,21 @@ const ChatActions = () => {
             textRef={textRef}
             message={message}
             setMessage={setMessage}
+            showPicker={showPicker}
+            setShowPicker={setShowPicker}
+            setShowAttachments={setShowAttachments}
           />
-          <Attachments />
+          <Attachments
+            showAttachments={showAttachments}
+            setShowAttachments={setShowAttachments}
+            setShowPicker={setShowPicker}
+          />
         </ul>
         {/* Input */}
         <Input message={message} setMessage={setMessage} textRef={textRef} />
         {/* Send button */}
         <button type="submit" className="btn">
-          {status === "loading" ? (
+          {status === "loading" && loading ? (
             <ClipLoader color="#E9EDEF" size={25} />
           ) : (
             <SendIcon className="dark:fill-dark_svg_1" />

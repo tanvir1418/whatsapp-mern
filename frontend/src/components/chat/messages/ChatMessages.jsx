@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import Message from "./Message";
 
 const ChatMessages = () => {
   const { messages } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
+  const endRef = useRef();
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    endRef.current.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="mb-[60px] bg-[url('https://res.cloudinary.com/dxhbkvt39/image/upload/v1708972249/x7egogychl3xjh1ozejt.jpg')] bg-cover bg-no-repeat">
@@ -18,6 +27,7 @@ const ChatMessages = () => {
             me={user._id === message.sender._id}
           />
         ))}
+        <div className="mt-2" ref={endRef}></div>
       </div>
     </div>
   );
