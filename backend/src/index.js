@@ -1,7 +1,10 @@
 const { error } = require("winston");
+const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const app = require("./app");
 const logger = require("./configs/logger.config");
+
+const SocketServer = require("./SocketServer");
 
 // .env variables
 const { DATABASE_URL } = process.env;
@@ -34,6 +37,19 @@ server = app.listen(PORT, () => {
   logger.info(`Server is running at: http://localhost:${PORT}`);
   console.log("Process ID", process.pid);
   // throw new Error("Error in server");
+});
+
+// socket.io
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: process.env.CLIENT_ENDPOINT,
+  },
+});
+
+io.on("connection", (socket) => {
+  logger.info(`Socket io connected successfully`);
+  SocketServer(socket);
 });
 
 // handle server errors

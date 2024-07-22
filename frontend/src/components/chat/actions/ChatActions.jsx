@@ -6,8 +6,9 @@ import { SendIcon } from "../../../svg";
 import { useDispatch, useSelector } from "react-redux";
 import { sendMessage } from "../../../features/chatSlice";
 import { ClipLoader } from "react-spinners";
+import SocketContext from "../../../context/SocketContext";
 
-const ChatActions = () => {
+const ChatActions = ({ socket }) => {
   const dispatch = useDispatch();
   const [showPicker, setShowPicker] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
@@ -26,7 +27,9 @@ const ChatActions = () => {
   const sendMessageHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await dispatch(sendMessage(values));
+    let newMsg = await dispatch(sendMessage(values));
+    // socket.emit("new message", newMsg.payload);
+    socket.emit("send message", newMsg.payload);
     setMessage("");
     setLoading(false);
   };
@@ -68,4 +71,9 @@ const ChatActions = () => {
   );
 };
 
-export default ChatActions;
+const ChatActionsWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <ChatActions {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default ChatActionsWithSocket;

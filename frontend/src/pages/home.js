@@ -1,15 +1,22 @@
 import React, { useEffect } from "react";
 import { Sidebar } from "../components/sidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { getConversations } from "../features/chatSlice";
+import {
+  getConversations,
+  updateMessagesAndConversations,
+} from "../features/chatSlice";
 import { ChatContainer, WhatsappHome } from "../components/chat";
+import SocketContext from "../context/SocketContext";
 
-const Home = () => {
+function Home({ socket }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
 
-  console.log(activeConversation);
+  // join user into the socket io
+  useEffect(() => {
+    socket.emit("join", user._id);
+  }, [user]);
 
   // get conversations
   useEffect(() => {
@@ -17,6 +24,13 @@ const Home = () => {
       dispatch(getConversations(user.token));
     }
   }, [user]);
+
+  // listening to received messages
+  useEffect(() => {
+    socket.on("receive message", (message) => {
+      dispatch(updateMessagesAndConversations(message));
+    });
+  }, []);
 
   return (
     <div className="h-screen dark:bg-dark_bg_1 flex items-center justify-center overflow-hidden">
@@ -28,6 +42,12 @@ const Home = () => {
       </div>
     </div>
   );
-};
+}
 
-export default Home;
+const HomeWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <Home {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+
+export default HomeWithSocket;
