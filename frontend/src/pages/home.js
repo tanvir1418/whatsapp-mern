@@ -13,6 +13,8 @@ function Home({ socket }) {
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  // typing
+  const [typing, setTyping] = useState(false);
 
   // join user into the socket io
   useEffect(() => {
@@ -31,11 +33,14 @@ function Home({ socket }) {
     }
   }, [user]);
 
-  // listening to received messages
   useEffect(() => {
+    // listening to received messages
     socket.on("receive message", (message) => {
       dispatch(updateMessagesAndConversations(message));
     });
+    // listening when an user is typing
+    socket.on("typing", (conversation) => setTyping(conversation));
+    socket.on("stop typing", () => setTyping(false));
   }, []);
 
   return (
@@ -43,9 +48,9 @@ function Home({ socket }) {
       {/* Container */}
       <div className="container h-screen flex py-[-19px]">
         {/* Sidebar */}
-        <Sidebar onlineUsers={onlineUsers} />
+        <Sidebar onlineUsers={onlineUsers} typing={typing} />
         {activeConversation._id ? (
-          <ChatContainer onlineUsers={onlineUsers} />
+          <ChatContainer onlineUsers={onlineUsers} typing={typing} />
         ) : (
           <WhatsappHome />
         )}

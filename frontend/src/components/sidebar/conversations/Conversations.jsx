@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import Conversation from "./Conversation";
 import { checkOnlineStatus } from "../../../utils/chat";
 
-const Conversations = ({ onlineUsers }) => {
+const Conversations = ({ onlineUsers, typing }) => {
   const { conversations, activeConversation } = useSelector(
     (state) => state.chat
   );
@@ -15,7 +15,14 @@ const Conversations = ({ onlineUsers }) => {
             .filter((c) => c.latestMessage || c._id === activeConversation._id)
             .map((convo, index) => {
               let check = checkOnlineStatus(onlineUsers, user, convo.users);
-              return <Conversation convo={convo} key={index} online={check} />;
+              return (
+                <Conversation
+                  convo={convo}
+                  key={index}
+                  online={check}
+                  typing={typing}
+                />
+              );
             })}
       </ul>
     </div>
