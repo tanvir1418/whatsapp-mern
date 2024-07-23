@@ -1,7 +1,21 @@
-module.exports = function (socket) {
+let onlineUsers = [];
+
+module.exports = function (socket, io) {
   // user joins or opens the application
   socket.on("join", (user) => {
     socket.join(user);
+    // add joined user to online users
+    if (!onlineUsers.some((u) => u.userId === user)) {
+      onlineUsers.push({ userId: user, socketId: socket.id });
+    }
+    // send online users to frontend
+    io.emit("get-online-users", onlineUsers);
+  });
+
+  // socket (user) disconnect ['closed browser tab', 'logout']
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+    io.emit("get-online-users", onlineUsers);
   });
 
   // join a conversation room

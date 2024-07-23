@@ -49,7 +49,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   logger.info(`Socket io connected successfully`);
-  SocketServer(socket);
+  SocketServer(socket, io);
 });
 
 // handle server errors
