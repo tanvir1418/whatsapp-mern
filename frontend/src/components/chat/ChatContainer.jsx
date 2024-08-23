@@ -1,14 +1,15 @@
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import ChatHeader from "./header/ChatHeader";
 import ChatMessages from "./messages/ChatMessages";
 import { useDispatch, useSelector } from "react-redux";
 import { getConversationMessages } from "../../features/chatSlice";
 import { ChatActions } from "./actions";
 import { checkOnlineStatus } from "../../utils/chat";
+import FilesPreview from "./preview/files/FilesPreview";
 
 const ChatContainer = ({ onlineUsers, typing }) => {
   const dispatch = useDispatch();
-  const { activeConversation } = useSelector((state) => state.chat);
+  const { activeConversation, files } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
   const { token } = user;
   const values = {
@@ -34,10 +35,16 @@ const ChatContainer = ({ onlineUsers, typing }) => {
             activeConversation.users
           )}
         />
-        {/* Chat messages */}
-        <ChatMessages typing={typing} />
-        {/* Chat Actions */}
-        <ChatActions />
+        {files.length > 0 ? (
+          <FilesPreview />
+        ) : (
+          <Fragment>
+            {/* Chat messages */}
+            <ChatMessages typing={typing} />
+            {/* Chat Actions */}
+            <ChatActions />
+          </Fragment>
+        )}
       </div>
     </div>
   );
