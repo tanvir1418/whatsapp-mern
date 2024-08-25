@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import Message from "./Message";
 import Typing from "./Typing";
+import FileMessage from "./files/FileMessage";
 
 const ChatMessages = ({ typing }) => {
   const { messages, activeConversation } = useSelector((state) => state.chat);
@@ -21,13 +22,30 @@ const ChatMessages = ({ typing }) => {
       {/* Container */}
       <div className="scrollbar overflow_scrollbar overflow-auto py-2 px-[5%]">
         {/* Messages */}
-        {messages.map((message) => (
-          <Message
-            message={message}
-            key={message._id}
-            me={user._id === message.sender._id}
-          />
-        ))}
+        {messages &&
+          messages.map((message, index) => (
+            <Fragment key={index}>
+              {/* Message files */}
+              {message.files.length > 0
+                ? message.files.map((file) => (
+                    <FileMessage
+                      fileMessage={file}
+                      message={message}
+                      key={message._id}
+                      me={user._id === message.sender._id}
+                    />
+                  ))
+                : null}
+              {/* Message text */}
+              {message.message.length > 0 ? (
+                <Message
+                  message={message}
+                  key={message._id}
+                  me={user._id === message.sender._id}
+                />
+              ) : null}
+            </Fragment>
+          ))}
         {typing === activeConversation._id ? <Typing /> : null}
         <div className="mt-2" ref={endRef}></div>
       </div>

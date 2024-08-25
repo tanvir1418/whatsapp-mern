@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Add from "./Add";
-import { SendIcon } from "../../../../svg";
+import { CloseIcon, SendIcon } from "../../../../svg";
 import { uploadFiles } from "../../../../utils/upload";
-import { sendMessage } from "../../../../features/chatSlice";
+import {
+  removeFileFromFiles,
+  sendMessage,
+} from "../../../../features/chatSlice";
 import SocketContext from "../../../../context/SocketContext";
+import { ClipLoader } from "react-spinners";
+import VideoThumbnail from "react-video-thumbnail";
 
 const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
   const dispatch = useDispatch();
@@ -12,6 +17,7 @@ const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
   const { files, activeConversation } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
   const { token } = user;
+  // send message handler
   const sendMessageHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -28,6 +34,12 @@ const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
     socket.emit("send message", newMsg.payload);
     setLoading(false);
   };
+  // handle remove file
+  const handleRemoveFile = (e, index) => {
+    e.stopPropagation();
+    dispatch(removeFileFromFiles(index));
+    setActiveIndex(0);
+  };
   return (
     <div className="w-[97%] flex items-center justify-between mt-2 border-t dark:border-dark_border_2">
       {/* Empty */}
@@ -37,7 +49,7 @@ const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
         {files.map((file, i) => (
           <div
             key={i}
-            className={`w-14 h-14 border dark:border-white mt-2 rounded-md overflow-hidden cursor-pointer ${
+            className={`fileThumbnail relative w-14 h-14 border dark:border-white mt-2 rounded-md overflow-hidden cursor-pointer ${
               activeIndex === i ? "border-[3px] !border-green_1" : ""
             }`}
             onClick={() => setActiveIndex(i)}
@@ -48,6 +60,8 @@ const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
                 alt=""
                 className="w-full h-full object-cover"
               />
+            ) : file.type === "VIDEO" ? (
+              <VideoThumbnail videoUrl={file.fileData} />
             ) : (
               <img
                 src={`../../../../images/file/${file.type}.png`}
@@ -55,6 +69,13 @@ const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
                 className="w-8 h-10 mt-1.5 ml-2.5"
               />
             )}
+            {/* Remove file icon */}
+            <div
+              className="removeFileIcon hidden"
+              onClick={(e) => handleRemoveFile(e, i)}
+            >
+              <CloseIcon className="dark:fill-white absolute right-0 top-0 w-4 h-4" />
+            </div>
           </div>
         ))}
         {/* Add another file */}
@@ -65,7 +86,11 @@ const HandleAndSend = ({ activeIndex, setActiveIndex, message, socket }) => {
         className="bg-green_1 w-16 h-16 mt-2 rounded-full flex items-center justify-center cursor-pointer"
         onClick={(e) => sendMessageHandler(e)}
       >
-        <SendIcon className="fill-white" />
+        {loading ? (
+          <ClipLoader color="#E9EDEF" size={25} />
+        ) : (
+          <SendIcon className="fill-white" />
+        )}
       </div>
     </div>
   );
