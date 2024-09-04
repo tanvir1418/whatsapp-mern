@@ -17,9 +17,9 @@ dotenv.config();
 const app = express();
 
 // morgan
-if (process.env.NODE_ENV !== "production") {
-  app.use(morgan("tiny"));
-}
+// if (process.env.NODE_ENV !== "production") {
+//   app.use(morgan("tiny"));
+// }
 
 // helmet
 app.use(helmet());

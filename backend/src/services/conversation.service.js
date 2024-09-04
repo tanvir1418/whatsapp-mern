@@ -1,28 +1,46 @@
 const createHttpError = require("http-errors");
 const { ConversationModel, UserModel } = require("../models");
 
-const doesConversationExist = async (sender_id, receiver_id) => {
-  let convos = await ConversationModel.find({
-    isGroup: false,
-    $and: [
-      { users: { $elemMatch: { $eq: sender_id } } },
-      { users: { $elemMatch: { $eq: receiver_id } } },
-    ],
-  })
-    .populate("users", "-password")
-    .populate("latestMessage");
+const doesConversationExist = async (sender_id, receiver_id, isGroup) => {
+  if (isGroup === false) {
+    let convos = await ConversationModel.find({
+      isGroup: false,
+      $and: [
+        { users: { $elemMatch: { $eq: sender_id } } },
+        { users: { $elemMatch: { $eq: receiver_id } } },
+      ],
+    })
+      .populate("users", "-password")
+      .populate("latestMessage");
 
-  if (!convos) {
-    throw createHttpError.BadRequest("Oops...Something went wrong!");
+    if (!convos) {
+      throw createHttpError.BadRequest("Oops...Something went wrong!");
+    }
+
+    // populate message model
+    convos = await UserModel.populate(convos, {
+      path: "latestMessage.sender",
+      select: "name email picture status",
+    });
+
+    return convos[0];
+  } else {
+    let convo = await ConversationModel.findById(isGroup)
+      .populate("users admin", "-password")
+      .populate("latestMessage");
+
+    if (!convo) {
+      throw createHttpError.BadRequest("Oops...Something went wrong!");
+    }
+
+    // populate message model
+    convo = await UserModel.populate(convo, {
+      path: "latestMessage.sender",
+      select: "name email picture status",
+    });
+
+    return convo;
   }
-
-  // populate message model
-  convos = await UserModel.populate(convos, {
-    path: "latestMessage.sender",
-    select: "name email picture status",
-  });
-
-  return convos[0];
 };
 
 const createConversation = async (data) => {

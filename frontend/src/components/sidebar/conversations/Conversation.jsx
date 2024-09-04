@@ -17,6 +17,7 @@ const Conversation = ({ convo, socket, online, typing }) => {
   const { token } = user;
   const values = {
     receiver_id: getConversationId(user, convo.users),
+    isGroup: convo.isGroup ? convo._id : false,
     token,
   };
   const openConversation = async () => {
@@ -43,8 +44,12 @@ const Conversation = ({ convo, socket, online, typing }) => {
             }`}
           >
             <img
-              src={getConversationPicture(user, convo.users)}
-              alt={convo.name}
+              src={
+                convo.isGroup
+                  ? convo.picture
+                  : getConversationPicture(user, convo.users)
+              }
+              alt=""
               className="w-full h-full object-cover"
             />
           </div>
@@ -52,7 +57,9 @@ const Conversation = ({ convo, socket, online, typing }) => {
           <div className="w-full flex flex-col">
             {/* Conversation name */}
             <h1 className="font-bold flex items-center gap-x-2">
-              {capitalize(getConversationName(user, convo.users))}
+              {convo.isGroup
+                ? convo.name
+                : capitalize(getConversationName(user, convo.users))}
             </h1>
             {/* Conversation message */}
             <div>

@@ -19,9 +19,9 @@ mongoose.connection.on("error", (err) => {
 });
 
 // mongodb debug mode
-if (process.env.NODE_ENV !== "production") {
-  mongoose.set("debug", true);
-}
+// if (process.env.NODE_ENV !== "production") {
+//   mongoose.set("debug", true);
+// }
 
 // mongodb connection
 // mongoose.connect(DATABASE_URL, {

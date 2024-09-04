@@ -30,7 +30,7 @@ const CallActions = ({ endCall }) => {
               <MuteIcon className="fill-white w-5" />
             </button>
           </li>
-          <li onClick={endCall}>
+          <li onClick={() => endCall()}>
             <button className="btn_secondary bg-red-600 rotate-[135deg]">
               <DialIcon className="fill-white w-6" />
             </button>

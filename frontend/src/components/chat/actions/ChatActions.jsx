@@ -35,7 +35,7 @@ const ChatActions = ({ socket }) => {
   };
   return (
     <form
-      onSubmit={sendMessageHandler}
+      onSubmit={(e) => sendMessageHandler(e)}
       className="dark:bg-dark_bg_2 h-[60px] w-full flex items-center absolute bottom-0 py-2 px-4 select-none"
     >
       {/* Container */}
