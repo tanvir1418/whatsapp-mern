@@ -1,10 +1,7 @@
 const express = require("express");
 const trimRequest = require("trim-request");
 const authMiddleware = require("../middlewares/authMiddleware");
-const {
-  sendMessage,
-  getMessages,
-} = require("../controllers/message.controller");
+const { sendMessage, getMessages } = require("../controllers/message.controller");
 
 const router = express.Router();
 
